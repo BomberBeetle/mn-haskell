@@ -25,14 +25,15 @@ nullifyFirstLayer pivot [] = []
 
 solveForXs lst
     | detExtended triLst == 0 = Nothing
-    | otherwise = Just (reverse $ innerSolve [] $ reverse lst) --Now I have to actually solve this.
+    | otherwise = Just (reverse $ innerSolve [] (reverse triLst)) --Now I have to actually solve this.
     where triLst = gauss lst
 
 innerSolve :: (Fractional a, Eq a)=> [a] -> [[a]] -> [a]
 innerSolve coefs (x:xs) = innerSolve (coefs ++ [solvedVar]) xs
-    where solvedVar = ((last x)- sum (zipWith (*) (take (length coefs) (clipZeros x)) coefs))/(reverse x !! 1)
+    where unextArray = drop 1 (reverse  $ clipZeros x)
+          solvedVar = ((last x) - sum (zipWith (*) (take (length coefs) unextArray) coefs))/(last unextArray)
 
-innerSolve coefs [] = []
+innerSolve coefs [] = coefs
 
 clipZeros (x:xs) = if x == 0 then clipZeros xs else x:xs
 clipZeros [] = []
